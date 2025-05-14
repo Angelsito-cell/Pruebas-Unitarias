@@ -1,2 +1,17 @@
 # Pruebas-Unitarias
 Pruebas-Unitarias Tarea
+
+## Identificación de métodos
+
+| Método               | Caso de prueba                          | Estado inicial del mock                                                                 | Acción                                    | Resultado esperado                                                                 |
+|----------------------|-----------------------------------------|-----------------------------------------------------------------------------------------|-------------------------------------------|-----------------------------------------------------------------------------------|
+| crearTarea           | Descripción válida                      | mockRepo.agregar() configurado para aceptar cualquier tarea                              | crearTarea("Revisar PRs")                 | Tarea guardada (verify agregar) - No excepciones                                  |
+| crearTarea           | Descripción vacía                       | Ninguna configuración específica                                                        | crearTarea("")                            | Lanza IllegalArgumentException                                                 |
+| asignarTarea         | Tarea y usuario existen                 | mockRepo.buscarPorId(1) → Tarea(1,...), userRepo.buscarPorId(1) → Usuario(1,...)        | asignarTarea(1, 1)                       | Tarea.asignadoA == Usuario(1)                                                    |
+| asignarTarea         | Usuario no existe                       | mockRepo.buscarPorId(1) → Tarea, userRepo.buscarPorId(999) → null                       | asignarTarea(1, 999)                     | Lanza IllegalArgumentException                                                 |
+| filtrarPorEstado     | Estado = ABIERTA                        | mockRepo.listar() → [Tarea(estado=ABIERTA), Tarea(estado=FINALIZADA)]                   | filtrarPorEstado(ABIERTA)                | Retorna lista con 1 elemento (la ABIERTA)                                        |
+| cambiarEstadoTarea   | Cerrar tarea con subtareas pendientes   | mockRepo.buscarPorId(1) → Tarea(puedeCerrarse()=false)                                  | cambiarEstadoTarea(1, 3)                 | Lanza IllegalStateException                                                      |
+| crearUsuario         | Email inválido                          | Ninguna configuración (validación previa al repo)                                       | crearUsuario("Bob", "email_mal_formado") | Lanza IllegalArgumentException                                                 |
+| obtenerPorFecha      | Fecha = "hoy"                           | mockRepo.listar() → [Evento(fecha=hoy), Evento(fecha=ayer)]                             | filtrarPorFecha("hoy")                   | Retorna lista con 1 evento (el de hoy)                                           |
+| crearSubtarea        | ID padre válido                         | mockRepo.buscarPorId(1) → Tarea padre, mockRepo.agregar() configurado                   | crearSubtarea(1, "Subtarea")              | Subtarea agregada y padre.subtareas contiene nueva subtarea                      |
+| obtenerResumenTareas | Con 3 tareas de diferentes estados      | mockRepo.listar() → [Tarea(ABIERTA), Tarea(EN_PROGRESO), Tarea(FINALIZADA)]             | obtenerResumenTareas()                    | Resumen con total=3 y conteo correcto por estado                                 |
