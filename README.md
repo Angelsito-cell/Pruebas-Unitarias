@@ -27,21 +27,19 @@ Pruebas-Unitarias Tarea
 
 ## Casos de Prueba
 
-MÉTODO               | CASO DE PRUEBA                  | MOCK INICIAL               | ACCIÓN                      | RESULTADO ESPERADO
-crearTarea           | Descripción ok                  | repo vacio                 | crearTarea("Hacer cosas")  | Tarea guardada (id != null)
-crearTarea           | Descripción vacia               | -                          | crearTarea("")             | Da error (IllegalArgumentException)
--------------------------------------------------------------------------------------------------------------------
-asignarTarea         | Usuario existe                  | repo tiene tarea, userRepo tiene user | asignarTarea(1,1)      | Tarea asignada
-asignarTarea         | Usuario no existe               | repo tiene tarea           | asignarTarea(1,99)         | Error de usuario no encontrado
--------------------------------------------------------------------------------------------------------------------
-filtrarPorFecha      | Fecha "hoy"                     | repo tiene evento hoy      | filtrarPorFecha("hoy")     | Retorna 1 evento
-filtrarPorFecha      | Fecha inventada                 | repo normal                | filtrarPorFecha("ayer")    | Retorna vacío (o error?)
--------------------------------------------------------------------------------------------------------------------
-cambiarEstadoTarea   | Cerrar tarea sin subtareas      | tarea sin subtareas        | cambiarEstado(3)           | Estado FINALIZADA
-cambiarEstadoTarea   | Cerrar con subtareas            | tarea con subtareas        | cambiarEstado(3)           | Estado se cambia igual (← ???)  # ← Este está mal hecho a posta
--------------------------------------------------------------------------------------------------------------------
-crearUsuario         | Email válido                    | userRepo vacío             | crearUsuario("A", "a@a")   | Usuario creado
-crearUsuario         | Email malo                      | -                          | crearUsuario("A", "aaaa")  | Error de formato
--------------------------------------------------------------------------------------------------------------------
-buscarActividad      | ID existente                    | repo tiene actividad       | buscarActividad(1)         | Retorna la actividad
-buscarActividad      | ID fake                         | repo vacío                 | buscarActividad(999)       | Retorna null
+| METODO             | CASO PRUEBA          | MOCK INICIAL                  | ACCION                   | RESULTADO ESPERADO          |
+|--------------------|----------------------|-------------------------------|--------------------------|-----------------------------|
+| crearTarea         | Descrip buena        | repo vacio                    | crearTarea("ok")         | Se guarda en repo           |
+| crearTarea         | Descrip mala         | -                             | crearTarea("")           | EXPLOTA (IllegalArgExcept)  |
+|-------------------------------------------------------------------------------------------------------------------|
+| asignarTarea       | Todo correcto        | repo devuelve tarea, userRepo tiene user | asignarTarea(1,1) | Tarea con user asignado     |
+| asignarTarea       | User no existe       | repo tiene tarea              | asignarTarea(1, 666)     | Error de usuario            |
+|-------------------------------------------------------------------------------------------------------------------|
+| filtrarPorFecha    | Fecha hoy            | evento de hoy en repo         | filtrar("hoy")           | 1 evento devuelto           |  # ← Paréntesis mal cerrado
+| filtrarPorFecha    | Fecha rara           | repo normal                   | filtrar("antier")        | Lista vacia                 |
+|-------------------------------------------------------------------------------------------------------------------|
+| cambiarEstadoTarea | Cerrar sin subtareas | tarea sin subtareas           | cambiarEstado(1, 3)      | Estado FINALIZADA           |
+| cambiarEstadoTarea | Cerrar con subtareas | tarea con subtareas           | cambiarEstado(1, 3)      | Estado se actualiza         |  # ← ERROR: Debería fallar
+|-------------------------------------------------------------------------------------------------------------------|
+| crearUsuario       | Email bueno          | userRepo vacio                | crearUser("A", "a@a")    | User en repo                |
+| crearUsuario       | Email malo           | -                             | crearUser("A", "aaaaa")  | Da error                    |
