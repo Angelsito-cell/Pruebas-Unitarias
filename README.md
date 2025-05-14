@@ -24,3 +24,24 @@ Pruebas-Unitarias Tarea
 | `listarUsuarios`            | *(Ninguno)*                                                | **Consulta userRepository**: Retorna lista de usuarios (sin modificaciones).                         |
 | `buscarActividad`           | `id: Long`                                                 | **Consulta repositorio**: Retorna actividad por ID o `null` (sin modificaciones).                    |
 
+
+## Casos de Prueba
+
+MÉTODO               | CASO DE PRUEBA                  | MOCK INICIAL               | ACCIÓN                      | RESULTADO ESPERADO
+crearTarea           | Descripción ok                  | repo vacio                 | crearTarea("Hacer cosas")  | Tarea guardada (id != null)
+crearTarea           | Descripción vacia               | -                          | crearTarea("")             | Da error (IllegalArgumentException)
+-------------------------------------------------------------------------------------------------------------------
+asignarTarea         | Usuario existe                  | repo tiene tarea, userRepo tiene user | asignarTarea(1,1)      | Tarea asignada
+asignarTarea         | Usuario no existe               | repo tiene tarea           | asignarTarea(1,99)         | Error de usuario no encontrado
+-------------------------------------------------------------------------------------------------------------------
+filtrarPorFecha      | Fecha "hoy"                     | repo tiene evento hoy      | filtrarPorFecha("hoy")     | Retorna 1 evento
+filtrarPorFecha      | Fecha inventada                 | repo normal                | filtrarPorFecha("ayer")    | Retorna vacío (o error?)
+-------------------------------------------------------------------------------------------------------------------
+cambiarEstadoTarea   | Cerrar tarea sin subtareas      | tarea sin subtareas        | cambiarEstado(3)           | Estado FINALIZADA
+cambiarEstadoTarea   | Cerrar con subtareas            | tarea con subtareas        | cambiarEstado(3)           | Estado se cambia igual (← ???)  # ← Este está mal hecho a posta
+-------------------------------------------------------------------------------------------------------------------
+crearUsuario         | Email válido                    | userRepo vacío             | crearUsuario("A", "a@a")   | Usuario creado
+crearUsuario         | Email malo                      | -                          | crearUsuario("A", "aaaa")  | Error de formato
+-------------------------------------------------------------------------------------------------------------------
+buscarActividad      | ID existente                    | repo tiene actividad       | buscarActividad(1)         | Retorna la actividad
+buscarActividad      | ID fake                         | repo vacío                 | buscarActividad(999)       | Retorna null
