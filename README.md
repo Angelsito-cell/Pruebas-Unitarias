@@ -3,15 +3,24 @@ Pruebas-Unitarias Tarea
 
 ## Identificación de métodos
 
-| Método               | Caso de prueba                          | Estado inicial del mock                                                                 | Acción                                    | Resultado esperado                                                                 |
-|----------------------|-----------------------------------------|-----------------------------------------------------------------------------------------|-------------------------------------------|-----------------------------------------------------------------------------------|
-| crearTarea           | Descripción válida                      | mockRepo.agregar() configurado para aceptar cualquier tarea                              | crearTarea("Revisar PRs")                 | Tarea guardada (verify agregar) - No excepciones                                  |
-| crearTarea           | Descripción vacía                       | Ninguna configuración específica                                                        | crearTarea("")                            | Lanza IllegalArgumentException                                                 |
-| asignarTarea         | Tarea y usuario existen                 | mockRepo.buscarPorId(1) → Tarea(1,...), userRepo.buscarPorId(1) → Usuario(1,...)        | asignarTarea(1, 1)                       | Tarea.asignadoA == Usuario(1)                                                    |
-| asignarTarea         | Usuario no existe                       | mockRepo.buscarPorId(1) → Tarea, userRepo.buscarPorId(999) → null                       | asignarTarea(1, 999)                     | Lanza IllegalArgumentException                                                 |
-| filtrarPorEstado     | Estado = ABIERTA                        | mockRepo.listar() → [Tarea(estado=ABIERTA), Tarea(estado=FINALIZADA)]                   | filtrarPorEstado(ABIERTA)                | Retorna lista con 1 elemento (la ABIERTA)                                        |
-| cambiarEstadoTarea   | Cerrar tarea con subtareas pendientes   | mockRepo.buscarPorId(1) → Tarea(puedeCerrarse()=false)                                  | cambiarEstadoTarea(1, 3)                 | Lanza IllegalStateException                                                      |
-| crearUsuario         | Email inválido                          | Ninguna configuración (validación previa al repo)                                       | crearUsuario("Bob", "email_mal_formado") | Lanza IllegalArgumentException                                                 |
-| obtenerPorFecha      | Fecha = "hoy"                           | mockRepo.listar() → [Evento(fecha=hoy), Evento(fecha=ayer)]                             | filtrarPorFecha("hoy")                   | Retorna lista con 1 evento (el de hoy)                                           |
-| crearSubtarea        | ID padre válido                         | mockRepo.buscarPorId(1) → Tarea padre, mockRepo.agregar() configurado                   | crearSubtarea(1, "Subtarea")              | Subtarea agregada y padre.subtareas contiene nueva subtarea                      |
-| obtenerResumenTareas | Con 3 tareas de diferentes estados      | mockRepo.listar() → [Tarea(ABIERTA), Tarea(EN_PROGRESO), Tarea(FINALIZADA)]             | obtenerResumenTareas()                    | Resumen con total=3 y conteo correcto por estado                                 |
+
+| **Método**                  | **Parámetros de Entrada**                                  | **Resultado/Efecto en Repositorio**                                                                 |
+|-----------------------------|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `crearTarea`                | `descripcion: String`, `etiquetas: List<String> = emptyList()` | Agrega nueva `Tarea` al repositorio (`repositorio.agregar()`).                                      |
+| `asignarTarea`              | `tareaId: Long`, `usuarioId: Int`                          | Actualiza la tarea con el usuario asignado (modifica entidad en repositorio).                       |
+| `obtenerHistorialTarea`     | `tareaId: Long`                                            | **Solo lectura**: Retorna historial (no modifica repositorio).                                      |
+| `filtrarPorTipo`            | `tipo: String`                                             | **Consulta repositorio**: Retorna actividades del tipo especificado (sin modificaciones).           |
+| `filtrarPorEstado`          | `estado: Estado`                                           | **Consulta repositorio**: Retorna tareas en ese estado (sin modificaciones).                        |
+| `filtrarPorEtiqueta`        | `etiqueta: String`                                         | **Consulta repositorio**: Retorna actividades con la etiqueta (sin modificaciones).                 |
+| `filtrarPorUsuario`         | `usuarioId: Int`                                           | **Consulta repositorio**: Retorna tareas asignadas al usuario (sin modificaciones).                  |
+| `filtrarPorFecha`           | `fecha: String` (ej: "hoy")                                | **Consulta repositorio**: Retorna eventos de la fecha especificada (sin modificaciones).             |
+| `crearEvento`               | `descripcion: String`, `fecha: String`, `ubicacion: String`| Agrega nuevo `Evento` al repositorio (`repositorio.agregar()`).                                      |
+| `listarActividades`         | *(Ninguno)*                                                | **Consulta repositorio**: Retorna lista completa de actividades (sin modificaciones).                |
+| `crearSubtarea`             | `parentId: Long`, `descripcion: String`                    | Agrega subtarea al repositorio y actualiza tarea padre (`repositorio.agregar()` + actualización).    |
+| `cambiarEstadoTarea`        | `tareaId: Long`, `opcionElegida: Int` (1-3)                | Actualiza estado de la tarea en repositorio (modifica entidad).                                     |
+| `obtenerResumenTareas`      | *(Ninguno)*                                                | **Consulta repositorio**: Retorna estadísticas de tareas (sin modificaciones).                       |
+| `obtenerEventosProgramados` | *(Ninguno)*                                                | **Consulta repositorio**: Retorna conteo de eventos por fecha (sin modificaciones).                  |
+| `crearUsuario`              | `nombre: String`, `email: String`                          | Agrega nuevo `Usuario` a `userRepository` (`userRepository.agregar()`).                             |
+| `listarUsuarios`            | *(Ninguno)*                                                | **Consulta userRepository**: Retorna lista de usuarios (sin modificaciones).                         |
+| `buscarActividad`           | `id: Long`                                                 | **Consulta repositorio**: Retorna actividad por ID o `null` (sin modificaciones).                    |
+
